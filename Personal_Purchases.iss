@@ -11,9 +11,9 @@ Sub Main
 	emptyDb = False
 	Call ExcelImport()
 	Call Beauty()
-	If arrayCount > 0 Then 
-		Call createFolder()
-	End If
+	'If arrayCount > 0 Then 
+		'Call createFolder()
+	'End If
 	Call Cable()
 	Call Candy_Eating()
 	Call Catalog()
@@ -177,7 +177,10 @@ Function Catalog
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -202,7 +205,10 @@ Function Computer
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -227,7 +233,10 @@ Function Department_stores
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -252,7 +261,10 @@ Function Digital
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	 
 	
 	Set subDb = Nothing
 End Function
@@ -277,7 +289,10 @@ Function Drinking
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -302,7 +317,10 @@ Function Florist
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -327,7 +345,10 @@ Function Gift
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -352,7 +373,10 @@ Function Medical
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -375,9 +399,12 @@ Function Motion_Picture
 	num = stats.NumRecords()
 	
 	'If num is zero it will close the databse
-	If num < 1 Then
+ 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -402,7 +429,10 @@ Function Pet
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -427,7 +457,10 @@ Function Prints
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -452,7 +485,10 @@ Function Golf
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -477,7 +513,10 @@ Function Religious
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -502,7 +541,10 @@ Function Sport
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	 
 	
 	Set subDb = Nothing
 End Function
@@ -527,7 +569,10 @@ Function Subscription
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
@@ -552,7 +597,10 @@ Function Video
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	 
 	
 	Set subDb = Nothing
 End Function
@@ -577,7 +625,10 @@ Function Wholesale_medical_dentail
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-	End If 
+		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
+	End If 	
 	
 	Set subDb = Nothing
 End Function
