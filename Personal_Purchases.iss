@@ -1,6 +1,6 @@
 Dim db As Object 
 Dim subDb As Object
-
+'testing git clone
 Sub Main
 	Call ExcelImport()
 	Call Beauty()
