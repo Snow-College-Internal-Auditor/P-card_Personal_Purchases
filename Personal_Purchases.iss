@@ -11,6 +11,9 @@ Sub Main
 	emptyDb = False
 	Call ExcelImport()
 	Call Beauty()
+	If arrayCount > 0 Then 
+		Call createFolder()
+	End If
 	Call Cable()
 	Call Candy_Eating()
 	Call Catalog()
@@ -33,11 +36,25 @@ Sub Main
 	Client.RefreshFileExplorer
 End Sub
 
+Function createFolder
+
+	' Set the task type.
+	Set task = Client.ProjectManagement
+	
+	subFilename = InputBox("Type The Name of The Month: ", "Name Input", "IDEATest")
+	
+	' Create a new folder.
+	task.CreateFolder subFilename
+	Set task = Nothing
+
+End Function
+
+
 Function emptyDatabase()
 	
 	ReDim MyArray(arrayCount)
 	MyArray(arrayCount) = dbName
-	MsgBox MyArray(1)
+	MsgBox MyArray(arrayCount)
 
 End Function 
 
@@ -105,6 +122,8 @@ Function Cable
 	If num < 1 Then
 		subDb.Close
 		emptyDb = True
+		arrayCount = arrayCount + 1
+		Call emptyDatabase()
 	End If 
 	
 	Set subDb = Nothing
@@ -132,6 +151,7 @@ Function Candy_Eating
 		subDb.Close
 		emptyDb = True
 		arrayCount = arrayCount + 1
+		Call emptyDatabase()
 	End If 
 	
 	Set subDb = Nothing
