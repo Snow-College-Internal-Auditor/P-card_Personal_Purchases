@@ -2,14 +2,13 @@ Dim db As Object
 Dim subDb As Object
 Dim emptyDb As Boolean 
 Dim arrayCount As Integer 
+Dim MyArray() As String 
+Dim dbName As String 
+
 
 Sub Main
 
 	emptyDb = False
-
-	'Call emptyDatabase()
-
-
 	Call ExcelImport()
 	Call Beauty()
 	Call Cable()
@@ -34,11 +33,10 @@ Sub Main
 	Client.RefreshFileExplorer
 End Sub
 
-Function emptyDatabase
+Function emptyDatabase()
 	
-	Dim MyArray() As String 
-	ReDim MyArray(1)
-	MyArray(1) = "hi"
+	ReDim MyArray(arrayCount)
+	MyArray(arrayCount) = dbName
 	MsgBox MyArray(1)
 
 End Function 
@@ -81,6 +79,7 @@ Function Beauty
 		subDb.Close
 		emptyDb = True
 		arrayCount = arrayCount + 1
+		Call emptyDatabase()
 	End If 	
 
 	Set subDb = Nothing
