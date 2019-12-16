@@ -59,6 +59,10 @@ Function Beauty
 	Dim num As Integer
 	num = stats.NumRecords()
 	
+	If num < 1 Then
+		subDb.Close
+	End If 	
+
 	Set subDb = Nothing
 End Function
 
@@ -278,3 +282,5 @@ Function Wholesale_medical_dentail
 	Set task = Nothing
 	Client.OpenDatabase (dbName)
 End Function
+
+
