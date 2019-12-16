@@ -4,9 +4,11 @@ Dim arrayCount As Integer
 Dim MyArray(20) As String 
 Dim dbName As String 
 Dim subFilename As String 
+Dim customdbName As String 
 
 
 Sub Main
+	call Filename()
 	Call ExcelImport()
 	Call Beauty()
 	Call Cable()
@@ -35,7 +37,13 @@ Sub Main
 	Client.RefreshFileExplorer
 End Sub
 
-Function emptyDatabase()
+Function Filename
+
+	subFilename = InputBox("Type The Name of The Month: ", "Name Input", "Month")
+
+End Function
+
+Function emptyDatabase
 	arrayCount = 1 + arrayCount
 	MyArray(arrayCount) = dbName
 End Function 
@@ -44,7 +52,7 @@ Function createFolder
 	' Set the task type.
 	Set task = Client.ProjectManagement
 	
-	subFilename = InputBox("Type The Name of The Month: ", "Name Input", "IDEATest")
+	subFilename = InputBox("Type The Name of The Month: ", "Name Input", "IDEATest_" + subFilename)
 	
 	' Create a new folder.
 	task.CreateFolder subFilename
@@ -95,7 +103,7 @@ End Function
 Function Beauty
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "BEAUTY.IMD"
+	dbName = "BEAUTY_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""BEAUTY"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -120,7 +128,7 @@ End Function
 Function Cable
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "CABLE.IMD"
+	dbName = "CABLE_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CABLE"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -145,7 +153,7 @@ End Function
 Function Candy_Eating
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "CANDY.IMD"
+	dbName = "CANDY_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CANDY"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -171,7 +179,7 @@ End Function
 Function Catalog
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "CATALOG.IMD"
+	dbName = "CATALOG_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CATALOG MERCHANT"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -197,7 +205,7 @@ End Function
 Function Computer
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "COMPUTER.IMD"
+	dbName = "COMPUTER_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""COMPUTER"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -223,7 +231,7 @@ End Function
 Function Department_stores
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "DEPARTMENT.IMD"
+	dbName = "DEPARTMENT_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""DEPARTMENT"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -249,7 +257,7 @@ End Function
 Function Digital
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "DIGITAL.IMD"
+	dbName = "DIGITAL_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""LARGE DIGITAL"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -275,7 +283,7 @@ End Function
 Function Drinking
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "DRINKING.IMD"
+	dbName = "DRINKING_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""DRINKING"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -301,7 +309,7 @@ End Function
 Function Florist
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "FLORISTS.IMD"
+	dbName = "FLORISTS_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""FLORISTS"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -327,7 +335,7 @@ End Function
 Function Gift
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "GIFT.IMD"
+	dbName = "GIFT_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""GIFT"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -353,7 +361,7 @@ End Function
 Function Medical
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "Medical.IMD"
+	dbName = "Medical_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_GROUP_DESCRIPTION = ""MEDICAL"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -379,7 +387,7 @@ End Function
 Function Motion_Picture
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "MOTION _PICTURE.IMD"
+	dbName = "MOTION _PICTURE_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""MOTION PICTURE"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -405,7 +413,7 @@ End Function
 Function Pet
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "pets.IMD"
+	dbName = "PET_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PET"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -431,7 +439,7 @@ End Function
 Function Prints
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "PRINTS.IMD"
+	dbName = "PRINTS_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PUBLISHING"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -457,7 +465,7 @@ End Function
 Function Golf
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "PUBLIC_GOLF.IMD"
+	dbName = "PUBLIC_GOLF_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PUBLIC GOLF"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -483,7 +491,7 @@ End Function
 Function Religious
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "RELIGIOUS.IMD"
+	dbName = "RELIGIOUS_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""RELIGIOUS"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -509,7 +517,7 @@ End Function
 Function Sport
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "SPORT.IMD"
+	dbName = "SPORT_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""SPORT"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -535,7 +543,7 @@ End Function
 Function Subscription
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "Subscriptions.IMD"
+	dbName = "Subscriptions_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CONTINUITY"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -561,7 +569,7 @@ End Function
 Function Video
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "VIDEO.IMD"
+	dbName = "VIDEO_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""VIDEO"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
@@ -587,7 +595,7 @@ End Function
 Function Wholesale_medical_dentail
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = "WHOLESALE_MED_DENTAL.IMD"
+	dbName = "WHOLESALE_MED_DENTAL_" + subFilename + ".IMD"
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""WHOLESALE MED/DENTAL"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
