@@ -36,7 +36,7 @@ Sub Main
 End Sub
 
 Function emptyDatabase()
-	'ReDim MyArray(2)
+	arrayCount = 1 + arrayCount
 	MyArray(arrayCount) = dbName
 End Function 
 
@@ -111,7 +111,6 @@ Function Beauty
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = 1 + arrayCount
 		Call emptyDatabase()
 	End If 	
 
@@ -137,7 +136,6 @@ Function Cable
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 
 	
@@ -164,7 +162,6 @@ Function Candy_Eating
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 
 	
@@ -191,7 +188,6 @@ Function Catalog
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -218,7 +214,6 @@ Function Computer
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -245,7 +240,6 @@ Function Department_stores
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -272,7 +266,6 @@ Function Digital
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	 
 	
@@ -299,7 +292,6 @@ Function Drinking
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -326,7 +318,6 @@ Function Florist
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -353,7 +344,6 @@ Function Gift
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -380,7 +370,6 @@ Function Medical
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -407,7 +396,6 @@ Function Motion_Picture
 	'If num is zero it will close the databse
  	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -434,7 +422,6 @@ Function Pet
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -461,7 +448,6 @@ Function Prints
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -488,7 +474,6 @@ Function Golf
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -515,7 +500,6 @@ Function Religious
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -542,7 +526,6 @@ Function Sport
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	 
 	
@@ -569,7 +552,6 @@ Function Subscription
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
@@ -596,7 +578,6 @@ Function Video
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	 
 	
@@ -623,7 +604,6 @@ Function Wholesale_medical_dentail
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
-		arrayCount = arrayCount + 1
 		Call emptyDatabase()
 	End If 	
 	
