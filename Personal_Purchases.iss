@@ -1,7 +1,11 @@
 Dim db As Object 
 Dim subDb As Object
+Dim emptyDb As Boolean 
 
 Sub Main
+	
+	emptyDb = False
+
 	Call ExcelImport()
 	Call Beauty()
 	Call Cable()
@@ -59,8 +63,12 @@ Function Beauty
 	Dim num As Integer
 	num = stats.NumRecords()
 	
+	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
+		emptyDb = True
+	Else 
+		emptyDb = False
 	End If 	
 
 	Set subDb = Nothing
@@ -82,6 +90,14 @@ Function Cable
 	Dim num As Integer
 	num = stats.NumRecords()
 	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+		emptyDb = True
+	Else 
+		emptyDb = False
+	End If 
+	
 	Set subDb = Nothing
 End Function
 
@@ -93,7 +109,21 @@ Function Candy_Eating
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Catalog
@@ -104,7 +134,21 @@ Function Catalog
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+		
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Computer
@@ -115,7 +159,21 @@ Function Computer
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Department_stores
@@ -126,7 +184,21 @@ Function Department_stores
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Digital
@@ -137,7 +209,21 @@ Function Digital
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Drinking
@@ -148,7 +234,21 @@ Function Drinking
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Florist
@@ -159,7 +259,21 @@ Function Florist
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Gift
@@ -170,7 +284,21 @@ Function Gift
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Medical
@@ -181,7 +309,21 @@ Function Medical
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Motion_Picture
@@ -192,7 +334,21 @@ Function Motion_Picture
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+		
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Pet
@@ -203,7 +359,21 @@ Function Pet
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Prints
@@ -214,7 +384,21 @@ Function Prints
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Golf
@@ -225,7 +409,21 @@ Function Golf
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Religious
@@ -236,7 +434,21 @@ Function Religious
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Sport
@@ -247,7 +459,21 @@ Function Sport
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Subscription
@@ -258,7 +484,21 @@ Function Subscription
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Video
@@ -269,7 +509,21 @@ Function Video
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 Function Wholesale_medical_dentail
@@ -280,7 +534,21 @@ Function Wholesale_medical_dentail
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Client.OpenDatabase (dbName)
+	
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+	End If 
+	
+	Set subDb = Nothing
 End Function
 
 
