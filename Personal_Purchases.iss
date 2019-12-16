@@ -2,18 +2,15 @@ Dim db As Object
 Dim subDb As Object
 Dim emptyDb As Boolean 
 Dim arrayCount As Integer 
-Dim MyArray() As String 
+Dim MyArray(20) As String 
 Dim dbName As String 
+Dim subFilename As String 
 
 
 Sub Main
-
 	emptyDb = False
 	Call ExcelImport()
 	Call Beauty()
-	'If arrayCount > 0 Then 
-		'Call createFolder()
-	'End If
 	Call Cable()
 	Call Candy_Eating()
 	Call Catalog()
@@ -33,11 +30,19 @@ Sub Main
 	Call Subscription()
 	Call Video()
 	Call Wholesale_medical_dentail()
+	If arrayCount > 0 Then 
+		Call createFolder()
+		Call moveDatabase()
+	End If
 	Client.RefreshFileExplorer
 End Sub
 
-Function createFolder
+Function emptyDatabase()
+	'ReDim MyArray(2)
+	MyArray(arrayCount) = dbName
+End Function 
 
+Function createFolder
 	' Set the task type.
 	Set task = Client.ProjectManagement
 	
@@ -46,17 +51,31 @@ Function createFolder
 	' Create a new folder.
 	task.CreateFolder subFilename
 	Set task = Nothing
-
 End Function
 
-
-Function emptyDatabase()
+Function moveDatabase
+	' Declare variables and objects.
+	Dim path As String
+	Dim pm As Object
 	
-	ReDim MyArray(arrayCount)
-	MyArray(arrayCount) = dbName
-	MsgBox MyArray(arrayCount)
-
-End Function 
+	' Access project management object to manage databases/projects on
+	' server.
+	Set pm = Client.ProjectManagement
+	
+	For i = 1 To arrayCount
+		' Use path object to get the full path and file name to the specified database.
+		Set path = MyArray(i) 
+	
+		' Move the file from the server to a different server location.
+		pm.MoveDatabase path, subFilename
+	Next
+	
+	' Refresh the File Explorer.
+	Client.RefreshFileExplorer
+	
+	' Clear the path.
+	Set pm = Nothing
+End Function
 
 'Imports starting database
 Function ExcelImport
@@ -95,7 +114,7 @@ Function Beauty
 	If num < 1 Then
 		subDb.Close
 		emptyDb = True
-		arrayCount = arrayCount + 1
+		arrayCount = 1 + arrayCount
 		Call emptyDatabase()
 	End If 	
 
