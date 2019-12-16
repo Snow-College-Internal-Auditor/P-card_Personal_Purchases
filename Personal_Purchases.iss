@@ -1,10 +1,14 @@
 Dim db As Object 
 Dim subDb As Object
 Dim emptyDb As Boolean 
+Dim arrayCount As Integer 
 
 Sub Main
-	
+
 	emptyDb = False
+
+	'Call emptyDatabase()
+
 
 	Call ExcelImport()
 	Call Beauty()
@@ -29,6 +33,15 @@ Sub Main
 	Call Wholesale_medical_dentail()
 	Client.RefreshFileExplorer
 End Sub
+
+Function emptyDatabase
+	
+	Dim MyArray() As String 
+	ReDim MyArray(1)
+	MyArray(1) = "hi"
+	MsgBox MyArray(1)
+
+End Function 
 
 'Imports starting database
 Function ExcelImport
@@ -67,8 +80,7 @@ Function Beauty
 	If num < 1 Then
 		subDb.Close
 		emptyDb = True
-	Else 
-		emptyDb = False
+		arrayCount = arrayCount + 1
 	End If 	
 
 	Set subDb = Nothing
@@ -94,8 +106,6 @@ Function Cable
 	If num < 1 Then
 		subDb.Close
 		emptyDb = True
-	Else 
-		emptyDb = False
 	End If 
 	
 	Set subDb = Nothing
@@ -121,6 +131,8 @@ Function Candy_Eating
 	'If num is zero it will close the databse
 	If num < 1 Then
 		subDb.Close
+		emptyDb = True
+		arrayCount = arrayCount + 1
 	End If 
 	
 	Set subDb = Nothing
