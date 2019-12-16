@@ -1,6 +1,6 @@
 Dim db As Object 
 Dim subDb As Object
-'testing git clone
+
 Sub Main
 	Call ExcelImport()
 	Call Beauty()
@@ -26,6 +26,7 @@ Sub Main
 	Client.RefreshFileExplorer
 End Sub
 
+'Imports starting database
 Function ExcelImport
 	Set task = Client.GetImportTask("ImportExcel")
 	Set obj = client.commondialogs
@@ -51,19 +52,13 @@ Function Beauty
 	task.PerformTask 1, db.Count
 	Set task = Nothing
 	Set subDb = Client.OpenDatabase (dbName)
-	' Get the field statistics.
-
+	
+	'Checks if column name has any rows
 	Set stats = subDb.FieldStats("Name")
-
-	' Obtain the number of records.
-
-	MsgBox "Number of Records: " & stats.NumRecords()
-	
+	' Sets num equal to Number of rows in column
 	Dim num As Integer
-	
 	num = stats.NumRecords()
-
-	'Client.OpenDatabase (dbName)
+	
 	Set subDb = Nothing
 End Function
 
@@ -76,19 +71,13 @@ Function Cable
 	task.PerformTask 1, db.Count
 	Set task = Nothing
 	Set subDb = Client.OpenDatabase (dbName)
-	' Get the field statistics.
-
+	
+	'Checks if column name has any rows
 	Set stats = subDb.FieldStats("Name")
-
-	' Obtain the number of records.
-
-	MsgBox "Number of Records: " & stats.NumRecords()
-	
+	' Sets num equal to Number of rows in column
 	Dim num As Integer
-	
 	num = stats.NumRecords()
-
-	'Client.OpenDatabase (dbName)
+	
 	Set subDb = Nothing
 End Function
 
