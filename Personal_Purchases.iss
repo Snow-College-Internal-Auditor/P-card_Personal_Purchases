@@ -34,6 +34,7 @@ Sub Main
 		Call createFolder()
 		Call moveDatabase()
 	End If
+	Client.Closeall
 	Client.RefreshFileExplorer
 End Sub
 
