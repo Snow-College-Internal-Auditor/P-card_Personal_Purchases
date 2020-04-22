@@ -66,8 +66,6 @@ Function NumberOfPulls
 	Num  = Val(subFileName)
 End Function
 
-
-
 Function emptyDatabase
 	arrayCount = 1 + arrayCount
 	MyArray(arrayCount) = dbName
@@ -121,6 +119,7 @@ Function ExcelImport(i)
 	task.PerformTask
 	dbName = task.OutputFilePath("Sheet1")
 	Set task = Nothing
+	Set db = Client.OpenDatabase(dbName)
 End Function
 
 Function DatabaseToJoin
@@ -130,7 +129,6 @@ Function DatabaseToJoin
 	SecondDatabase = SecondDatabase + ".IMD"
 	NewDatabaseName = InputBox("Enter the neam of the new database: ", "Name Input", "Database")
 End Function
-
 
 ' File: Join Databases
 Function JoinDatabase(PrimeDatabase, SecondDatabase)
@@ -144,12 +142,11 @@ Function JoinDatabase(PrimeDatabase, SecondDatabase)
 	dbName = NewDatabaseName + ".IMD"
 	task.PerformTask dbName, "", WI_JOIN_ALL_REC
 	Set task = Nothing
-	Set db = Nothing
+	Set db = Client.OpenDatabase (dbName)
 End Function
 
 ' Data: Direct Extraction
 Function Beauty
-	Set db = Client.OpenDatabase (dbName)
 	Set task = db.Extraction
 	task.IncludeAllFields
 	dbName = "BEAUTY_" + subFilename + ".IMD"
