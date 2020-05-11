@@ -1,7 +1,9 @@
 Dim db As Object 
 Dim subDb As Object
-Dim arrayCount As Integer 
-Dim MyArray(20) As String 
+Dim emptyArrayCount As Integer 
+Dim NotEmptyArrayCount As Integer 
+Dim EmptyDatabaseArray(50) As String 
+Dim NotEmptyDatabaseArray(50) As String 
 
 Dim dbName As String 
 Dim subFilename As String 
@@ -29,10 +31,13 @@ Sub Main
 	Call Subscription()
 	Call Video()
 	Call Wholesale_medical_dentail()
-	If arrayCount > 0 Then 
+	If emptyArrayCount  > 0 Then 
 		Call createFolder()
 		Call moveDatabase()
 	End If
+	If NotEmptyArrayCount > 0 Then
+		Call AppendAllNoneEmptyDatabases()
+	End If 
 	Client.Closeall
 	Client.RefreshFileExplorer
 End Sub
@@ -45,8 +50,13 @@ End Function
 
 
 Function emptyDatabase
-	arrayCount = 1 + arrayCount
-	MyArray(arrayCount) = dbName
+	emptyArrayCount = 1 + emptyArrayCount
+	EmptyDatabaseArray(emptyArrayCount) = dbName
+End Function 
+
+Function NotEmptyDatabase
+	notEmptyArrayCount = 1 + notEmptyArrayCount
+	NotEmptyDatabaseArray(notEmptyArrayCount) = dbName
 End Function 
 
 
@@ -61,6 +71,7 @@ Function createFolder
 	Set task = Nothing
 End Function
 
+
 Function moveDatabase
 	' Declare variables and objects.
 	Dim path As String
@@ -70,9 +81,9 @@ Function moveDatabase
 	' server.
 	Set pm = Client.ProjectManagement
 	
-	For i = 1 To arrayCount
+	For i = 1 To emptyArrayCount 
 		' Use path object to get the full path and file name to the specified database.
-		Set path = MyArray(i) 
+		Set path = EmptyDatabaseArray(i) 
 	
 		' Move the file from the server to a different server location.
 		pm.MoveDatabase path, subFilename
@@ -108,6 +119,8 @@ Function Beauty
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 
 	Set subDb = Nothing
@@ -607,3 +620,32 @@ Function Wholesale_medical_dentail
 End Function
 
 
+Function AppendAllNoneEmptyDatabases
+	' Declare variables and objects.
+	Dim path As String
+	Dim pm As Object
+	
+	' Access project management object to manage databases/projects on
+	' server.
+	Set pm = Client.ProjectManagement
+	
+	For i = 1 To emptyArrayCount 
+		' Use path object to get the full path and file name to the specified database.
+		Set path = NotEmptyDatabaseArray(i) 
+	
+		Set db = Client.OpenDatabase(path)
+		Set task = db.AppendDatabase
+		Set path = NotEmptyDatabaseArray(i + 1)
+		task.AddDatabase path
+		dbName = "Append Databases" + i + ".IMD"
+		task.PerformTask dbName, ""
+	Next
+	
+	' Refresh the File Explorer.
+	Client.RefreshFileExplorer
+	
+	' Clear the path.
+	Set pm = Nothing
+	Set task = Nothing
+	Set db = Nothing
+End Function
