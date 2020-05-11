@@ -39,26 +39,33 @@ Sub Main
 		Call AppendAllNoneEmptyDatabases()
 	End If 
 	Client.Closeall
+	Call RemoveUnneededColumns
 	Client.RefreshFileExplorer
 End Sub
 
+
+'This calls a script that will loop through pcard statements and append them together
 Function CallScriptForPcardStatment
 	Client.RunIDEAScriptEx "Z:\2020 Activities\Data Analytics\Active Scripts\Master Scripts\Loop Pull and Join.iss", "", "", "", ""
 	PrimaryDatabaseName = "Append Databases.IMD"
 End Function
 
 
+'This keeps an array of all the db's with no data
 Function emptyDatabase
 	emptyArrayCount = 1 + emptyArrayCount
 	EmptyDatabaseArray(emptyArrayCount) = dbName
 End Function 
 
+
+'This keeps an array of all db's with data
 Function NotEmptyDatabase
 	notEmptyArrayCount = 1 + notEmptyArrayCount
 	NotEmptyDatabaseArray(notEmptyArrayCount) = dbName
 End Function 
 
 
+'This creates a folder
 Function createFolder
 	' Set the task type.
 	Set task = Client.ProjectManagement
@@ -71,6 +78,8 @@ Function createFolder
 End Function
 
 
+
+'This uses the EmptyDatabaseArray to move all of the db's in the EmptyDatabaseArray to there own folder
 Function moveDatabase
 	' Declare variables and objects.
 	Dim path As String
@@ -96,7 +105,30 @@ Function moveDatabase
 End Function
 
 
-' Data: Direct Extraction
+'Checks if there is an data and if there is not it calls the emptyDatabase
+'function and if there is data it calls the NotEmptyDatabase function 
+Function OrganizeDatabase
+	Set subDb = Client.OpenDatabase (dbName)
+	
+	'Checks if column name has any rows
+	Set stats = subDb.FieldStats("Name")
+	' Sets num equal to Number of rows in column
+	Dim num As Integer
+	num = stats.NumRecords()
+	
+	'If num is zero it will close the databse
+	If num < 1 Then
+		subDb.Close
+		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
+	End If 	
+	Set subDb = Nothing
+
+End Function 
+
+
+'This filters the db for the specific merchent code listed in the function name
 Function Beauty
 	Set db = Client.OpenDatabase(PrimaryDatabaseName)
 	Set task = db.Extraction
@@ -106,25 +138,11 @@ Function Beauty
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name 
 Function Cable
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -133,25 +151,11 @@ Function Cable
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Candy_Eating
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -159,27 +163,11 @@ Function Candy_Eating
 	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CANDY"""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
-	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Catalog
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -188,26 +176,11 @@ Function Catalog
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-		
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Computer
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -216,26 +189,11 @@ Function Computer
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Department_stores
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -244,26 +202,11 @@ Function Department_stores
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Digital
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -272,26 +215,11 @@ Function Digital
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	 
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Drinking
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -300,26 +228,11 @@ Function Drinking
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Florist
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -328,26 +241,11 @@ Function Florist
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Gift
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -356,26 +254,11 @@ Function Gift
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Medical
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -384,26 +267,11 @@ Function Medical
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Motion_Picture
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -412,26 +280,11 @@ Function Motion_Picture
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-		
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
- 	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Pet
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -440,26 +293,11 @@ Function Pet
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Prints
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -468,26 +306,11 @@ Function Prints
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Golf
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -496,26 +319,11 @@ Function Golf
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Religious
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -524,26 +332,11 @@ Function Religious
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Sport
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -552,26 +345,11 @@ Function Sport
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	 
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Subscription
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -580,26 +358,11 @@ Function Subscription
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name 
 Function Video
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -608,26 +371,11 @@ Function Video
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	 
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
+
+'This filters the db for the specific merchent code listed in the function name
 Function Wholesale_medical_dentail
 	Set task = db.Extraction
 	task.IncludeAllFields
@@ -636,27 +384,12 @@ Function Wholesale_medical_dentail
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
-	
-	Set subDb = Client.OpenDatabase (dbName)
-	
-	'Checks if column name has any rows
-	Set stats = subDb.FieldStats("Name")
-	' Sets num equal to Number of rows in column
-	Dim num As Integer
-	num = stats.NumRecords()
-	
-	'If num is zero it will close the databse
-	If num < 1 Then
-		subDb.Close
-		Call emptyDatabase()
-	ElseIf num >= 1 Then
-		Call NotEmptyDatabase() 
-	End If 	
-	
-	Set subDb = Nothing
+	Call OrganizeDatabase()
 End Function
 
 
+'This loops through the NotEmptyDatabaseArray and appends all 
+'of the databases together into one database
 Function AppendAllNoneEmptyDatabases
 	' Declare variables and objects.
 	Dim path As String
@@ -710,3 +443,33 @@ Function AppendAllNoneEmptyDatabases
 	Set task = Nothing
 	Set db = Nothing
 End Function
+
+
+'RemoveUnneededColumns 
+Function RemoveUnneededColumns 
+	Set db = Client.OpenDatabase(dbName)
+	Set task = db.Extraction
+	task.AddFieldToInc "NAME"
+	task.AddFieldToInc "SHORT_NAME"
+	task.AddFieldToInc "ACCOUNT_NUMBER"
+	task.AddFieldToInc "TRANSACTION_DATE"
+	task.AddFieldToInc "TRANSACTION_AMOUNT"
+	task.AddFieldToInc "TRANSACTION_STATUS"
+	task.AddFieldToInc "MERCHANT_CATEGORY_CODE_GROUP_CODE"
+	task.AddFieldToInc "MERCHANT_CATEGORY_CODE_GROUP_DESCRIPTION"
+	task.AddFieldToInc "MERCHANT_CATEGORY_CODE"
+	task.AddFieldToInc "MERCHANT_CATEGORY_CODE_DESCRIPTION"
+	task.AddFieldToInc "MERCHANT_NAME"
+	task.AddFieldToInc "MERCHANT_CITY"
+	task.AddFieldToInc "MERCHANT_STATE_PROVINCE"
+	task.AddFieldToInc "MERCHANT_ORDER_NUMBER"
+	task.AddFieldToInc "TRANSACTION_COMMENTS"
+	task.AddFieldToInc "DEPARTMENT"
+	dbName = "List of blocked Merchant Category Codes Cleaned.IMD"
+	task.AddExtraction dbName, "", ""
+	task.CreateVirtualDatabase = False
+	task.PerformTask 1, db.Count
+	Set task = Nothing
+	Set db = Nothing
+	Client.OpenDatabase (dbName)
+End Function 
