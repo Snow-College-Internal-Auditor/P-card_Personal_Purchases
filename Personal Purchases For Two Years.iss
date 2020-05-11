@@ -35,7 +35,7 @@ Sub Main
 		Call createFolder()
 		Call moveDatabase()
 	End If
-	If NotEmptyArrayCount > 0 Then
+	If NotEmptyArrayCount > 1 Then
 		Call AppendAllNoneEmptyDatabases()
 	End If 
 	Client.Closeall
@@ -44,8 +44,7 @@ End Sub
 
 Function CallScriptForPcardStatment
 	Client.RunIDEAScriptEx "Z:\2020 Activities\Data Analytics\Active Scripts\Master Scripts\Loop Pull and Join.iss", "", "", "", ""
-	PrimaryDatabaseName = InputBox("Now that we have appended all the Databases together what is the Primary one? ", "Name Input", "[Year][Month]TransactionStatement.xlsx Clean")
-	PrimaryDatabaseName = PrimaryDatabaseName + ".IMD"
+	PrimaryDatabaseName = "Append Databases.IMD"
 End Function
 
 
@@ -146,6 +145,8 @@ Function Cable
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 
 	
 	Set subDb = Nothing
@@ -172,6 +173,8 @@ Function Candy_Eating
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 
 	
 	Set subDb = Nothing
@@ -198,6 +201,8 @@ Function Catalog
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -224,6 +229,8 @@ Function Computer
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -250,6 +257,8 @@ Function Department_stores
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -276,6 +285,8 @@ Function Digital
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	 
 	
 	Set subDb = Nothing
@@ -302,6 +313,8 @@ Function Drinking
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -328,6 +341,8 @@ Function Florist
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -354,6 +369,8 @@ Function Gift
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -380,6 +397,8 @@ Function Medical
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -406,6 +425,8 @@ Function Motion_Picture
  	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -432,6 +453,8 @@ Function Pet
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -458,6 +481,8 @@ Function Prints
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -484,6 +509,8 @@ Function Golf
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -510,6 +537,8 @@ Function Religious
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -536,6 +565,8 @@ Function Sport
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	 
 	
 	Set subDb = Nothing
@@ -562,6 +593,8 @@ Function Subscription
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -588,6 +621,8 @@ Function Video
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	 
 	
 	Set subDb = Nothing
@@ -614,6 +649,8 @@ Function Wholesale_medical_dentail
 	If num < 1 Then
 		subDb.Close
 		Call emptyDatabase()
+	ElseIf num >= 1 Then
+		Call NotEmptyDatabase() 
 	End If 	
 	
 	Set subDb = Nothing
@@ -628,17 +665,41 @@ Function AppendAllNoneEmptyDatabases
 	' Access project management object to manage databases/projects on
 	' server.
 	Set pm = Client.ProjectManagement
-	
-	For i = 1 To emptyArrayCount 
+	Dim j As Integer 
+	j = 0
+	For i = 1 To NotEmptyArrayCount  
 		' Use path object to get the full path and file name to the specified database.
-		Set path = NotEmptyDatabaseArray(i) 
-	
-		Set db = Client.OpenDatabase(path)
-		Set task = db.AppendDatabase
-		Set path = NotEmptyDatabaseArray(i + 1)
-		task.AddDatabase path
-		dbName = "Append Databases" + i + ".IMD"
-		task.PerformTask dbName, ""
+		If i = 1 Then 
+			Set path = NotEmptyDatabaseArray(i) 
+		
+			Set db = Client.OpenDatabase(path)
+			Set task = db.AppendDatabase
+			Set path = NotEmptyDatabaseArray(i + 1)
+			task.AddDatabase path
+			If j = NotEmptyArrayCount Then
+				dbName = "List of blocked Merchant Category Codes"
+			ElseIf j < NotEmptyArrayCount Then 
+				dbName = "Append Databases " + path
+			End If
+			task.PerformTask dbName, ""
+			i = i + 1
+			j = j + 3
+			Client.RefreshFileExplorer
+		ElseIf i >= 3 Then 
+			Set db = Client.OpenDatabase(dbName)
+			Set task = db.AppendDatabase
+			Set path = NotEmptyDatabaseArray(i)
+			task.AddDatabase path
+			If j = NotEmptyArrayCount Then
+				dbName = "List of blocked Merchant Category Codes"
+			ElseIf j < NotEmptyArrayCount Then 
+				dbName = "Append Databases " + path
+			End If
+			task.PerformTask dbName, ""
+			j = j + 1
+			Client.RefreshFileExplorer
+
+		End If
 	Next
 	
 	' Refresh the File Explorer.
