@@ -4,13 +4,18 @@ Dim emptyArrayCount As Integer
 Dim NotEmptyArrayCount As Integer 
 Dim EmptyDatabaseArray(50) As String 
 Dim NotEmptyDatabaseArray(50) As String 
+Dim categories(20) As String
 
 Dim dbName As String 
 Dim subFilename As String 
 Dim customdbName As String 
 Dim PrimaryDatabaseName As String 
 Sub Main
+	Call SetArrayOfCategorys()
 	Call CallScriptForPcardStatment()
+	For Each item In categories
+  		Call Category(item)
+	Next
 	Call Beauty()
 	Call Cable()
 	Call Candy_Eating()
@@ -43,10 +48,35 @@ Sub Main
 	Client.RefreshFileExplorer
 End Sub
 
+Function SetArrayOfCategorys()
+
+	 categories(0) = "BEAUTY"
+	 categories(1) = "CABLE"
+	 categories(2) = "CANDY"
+	 categories(3) = "CATALOG"
+	 categories(4) = "COMPUTER"
+	 categories(5) = "DEPARTMENT"
+	 categories(6) = "DIGITAL"
+	 categories(7) = "DRINKING"
+	 categories(8) = "FLORISTS"
+	 categories(9) = "GIFT"
+	 categories(10) = "Medical"
+	 categories(11) = "MOTION _PICTURE"
+	 categories(12) = "PET"
+	 categories(13) = "PRINTS"
+	 categories(14) = "PUBLIC_GOLF"
+	 categories(15) = "RELIGIOUS"
+	 categories(16) = "SPORT"
+	 categories(17) = "Subscriptions"
+	 categories(18) = "VIDEO"
+	 categories(19) = "WHOLESALE_MED_DENTAL"
+
+End Function 
+
 
 'This calls a script that will loop through pcard statements and append them together
 Function CallScriptForPcardStatment
-	Client.RunIDEAScriptEx "Z:\2020 Activities\Data Analytics\Active Scripts\Master Scripts\Loop Pull and Join.iss", "", "", "", ""
+	Client.RunIDEAScriptEx "C:\Users\mckinnin.lloyd\Documents\Projects\Loop Pull and Join.iss", "", "", "", ""
 	PrimaryDatabaseName = "Append Databases.IMD"
 End Function
 
@@ -127,6 +157,18 @@ Function OrganizeDatabase
 
 End Function 
 
+
+Function Category(item)
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.Extraction
+	task.IncludeAllFields
+	dbName = item + ".IMD"
+	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = "+item
+	task.CreateVirtualDatabase = False
+	task.PerformTask 1, db.Count
+	Set task = Nothing
+	Call OrganizeDatabase()
+end function 
 
 'This filters the db for the specific merchent code listed in the function name
 Function Beauty
