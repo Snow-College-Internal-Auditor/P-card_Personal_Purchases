@@ -4,7 +4,7 @@ Dim emptyArrayCount As Integer
 Dim NotEmptyArrayCount As Integer 
 Dim EmptyDatabaseArray(50) As String 
 Dim NotEmptyDatabaseArray(50) As String 
-Dim categories(20) As String
+Dim categories(18) As String
 
 Dim dbName As String 
 Dim subFilename As String 
@@ -15,27 +15,8 @@ Sub Main
 	Call CallScriptForPcardStatment()
 	For Each item In categories
   		Call Category(item)
+  		Client.RefreshFileExplorer
 	Next
-	Call Beauty()
-	Call Cable()
-	Call Candy_Eating()
-	Call Catalog()
-	Call Computer()
-	Call Department_stores()
-	Call Digital()
-	Call Drinking()
-	Call Florist()
-	Call Gift()
-	Call Medical()
-	Call Motion_Picture()
-	Call Pet()
-	Call Prints()
-	Call Golf()
-	Call Religious()
-	Call Sport()
-	Call Subscription()
-	Call Video()
-	Call Wholesale_medical_dentail()
 	If emptyArrayCount  > 0 Then 
 		Call createFolder()
 		Call moveDatabase()
@@ -53,23 +34,22 @@ Function SetArrayOfCategorys()
 	 categories(0) = "BEAUTY"
 	 categories(1) = "CABLE"
 	 categories(2) = "CANDY"
-	 categories(3) = "CATALOG"
+	 categories(3) = "CATALOG MERCHANT"
 	 categories(4) = "COMPUTER"
 	 categories(5) = "DEPARTMENT"
-	 categories(6) = "DIGITAL"
+	 categories(6) = "LARGE DIGITAL"
 	 categories(7) = "DRINKING"
 	 categories(8) = "FLORISTS"
 	 categories(9) = "GIFT"
-	 categories(10) = "Medical"
-	 categories(11) = "MOTION _PICTURE"
+	 categories(10) = "MEDICAL"
+	 categories(11) = "MOTION PICTURE"
 	 categories(12) = "PET"
-	 categories(13) = "PRINTS"
-	 categories(14) = "PUBLIC_GOLF"
+	 categories(13) = "PUBLISHING"
+	 categories(14) = "PUBLIC GOLF"
 	 categories(15) = "RELIGIOUS"
 	 categories(16) = "SPORT"
-	 categories(17) = "Subscriptions"
+	 categories(17) = "CONTINUITY"
 	 categories(18) = "VIDEO"
-	 categories(19) = "WHOLESALE_MED_DENTAL"
 
 End Function 
 
@@ -163,271 +143,12 @@ Function Category(item)
 	Set task = db.Extraction
 	task.IncludeAllFields
 	dbName = item + ".IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = "+item
+	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = """ & item & """"
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
 	Call OrganizeDatabase()
 end function 
-
-'This filters the db for the specific merchent code listed in the function name
-Function Beauty
-	Set db = Client.OpenDatabase(PrimaryDatabaseName)
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "BEAUTY.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""BEAUTY"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name 
-Function Cable
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "CABLE.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CABLE"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Candy_Eating
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "CANDY.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CANDY"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Catalog
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "CATALOG.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CATALOG MERCHANT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Computer
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "COMPUTER.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""COMPUTER"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Department_stores
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "DEPARTMENT.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""DEPARTMENT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Digital
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "DIGITAL.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""LARGE DIGITAL"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Drinking
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "DRINKING.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""DRINKING"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Florist
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "FLORISTS.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""FLORISTS"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Gift
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "GIFT.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""GIFT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Medical
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "Medical.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_GROUP_DESCRIPTION = ""MEDICAL"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Motion_Picture
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "MOTION _PICTURE.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""MOTION PICTURE"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Pet
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "PET.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PET"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Prints
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "PRINTS.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PUBLISHING"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Golf
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "PUBLIC_GOLF.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PUBLIC GOLF"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Religious
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "RELIGIOUS.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""RELIGIOUS"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Sport
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "SPORT.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""SPORT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Subscription
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "Subscriptions.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CONTINUITY"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name 
-Function Video
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "VIDEO.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""VIDEO"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Wholesale_medical_dentail
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "WHOLESALE_MED_DENTAL.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""WHOLESALE MED/DENTAL"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
 
 
 'This loops through the NotEmptyDatabaseArray and appends all 
