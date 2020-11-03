@@ -26,7 +26,8 @@ Sub Main
 	End If 
 	Client.Closeall
 	Call RemoveUnneededColumns()
-	Call ExportDatabaseXLSX()
+	Call IndexByName()
+	call ExportDatabase()
 	Client.RefreshFileExplorer
 End Sub
 
@@ -210,7 +211,7 @@ End Function
 
 
 'RemoveUnneededColumns 
-Function RemoveUnneededColumns 
+Function RemoveUnneededColumns()
 	Set db = Client.OpenDatabase(dbName)
 	Set task = db.Extraction
 	task.AddFieldToInc "NAME"
@@ -239,10 +240,20 @@ Function RemoveUnneededColumns
 End Function 
 
 
-' File - Export Database: XLSX. Reorganizes the db and then exports it.
-Function ExportDatabaseXLSX()
+Function IndexByName()
 	Set db = Client.OpenDatabase(dbName)
 	Set task = db.Index
+	task.AddKey "NAME", "A"
+	task.Index FALSE
+	Set task = Nothing
+	Set db = Nothing
+End Function 
+
+
+Function ExportDatabase()
+	Set db = Client.OpenDatabase(dbName)
+	Set task = db.Index
+	task.AddKey "NAME", "A"
 	task.Index FALSE
 	task = db.ExportDatabase
 	task.IncludeAllFields
@@ -251,4 +262,6 @@ Function ExportDatabaseXLSX()
 	Set db = Nothing
 	Set task = Nothing
 End Function
+
+
 
