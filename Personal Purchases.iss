@@ -25,7 +25,8 @@ Sub Main
 		Call AppendAllNoneEmptyDatabases()
 	End If 
 	Client.Closeall
-	Call RemoveUnneededColumns
+	Call RemoveUnneededColumns()
+	Call ExportDatabaseXLSX()
 	Client.RefreshFileExplorer
 End Sub
 
@@ -236,3 +237,18 @@ Function RemoveUnneededColumns
 	Set db = Nothing
 	Client.OpenDatabase (dbName)
 End Function 
+
+
+' File - Export Database: XLSX. Reorganizes the db and then exports it.
+Function ExportDatabaseXLSX()
+	Set db = Client.OpenDatabase(dbName)
+	Set task = db.Index
+	task.Index FALSE
+	task = db.ExportDatabase
+	task.IncludeAllFields
+	' Display the setup dialog box before performing the task.
+	task.DisplaySetupDialog 0
+	Set db = Nothing
+	Set task = Nothing
+End Function
+
