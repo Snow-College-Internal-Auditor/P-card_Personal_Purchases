@@ -1,3 +1,8 @@
+Begin Dialog NewDialog 50,49,150,102,"NewDialog", .NewDialog
+  Text 17,10,106,14, "Is there a database to save to?", .Text1
+  OKButton 17,38,40,14, "Yes", .OKButton1
+  CancelButton 82,38,40,14, "No", .CancelButton1
+End Dialog
 Dim db As Object 
 Dim subDb As Object
 Dim emptyArrayCount As Integer 
@@ -10,6 +15,9 @@ Dim dbName As String
 Dim subFilename As String 
 Dim customdbName As String 
 Dim PrimaryDatabaseName As String 
+
+Dim getDatabaseDialog As NewDialog
+
 Sub Main
 	Call SetArrayOfCategorys()
 	Call CallScriptForPcardStatment()
@@ -27,7 +35,9 @@ Sub Main
 	Client.Closeall
 	Call RemoveUnneededColumns()
 	Call IndexByName()
-	call ExportDatabase()
+	'call ExportDatabase()
+	Client.RefreshFileExplorer
+	Call CreateOrOpenDatabase()
 	Client.RefreshFileExplorer
 End Sub
 
@@ -264,4 +274,47 @@ Function ExportDatabase()
 End Function
 
 
+Function CreateOrOpenDatabase()
+	Dim button As Integer
+	button = Dialog(getDatabaseDialog )
+	If button = -1 Then
+		Call OpenPurchaesDatabase()
+		Call AppendData()
+	ElseIf button = 0 Then
+		MsgBox("Hit else")
+	End If 
+End Function 
+ 
 
+' File - Import Assistant: Excel
+Function OpenPurchaesDatabase()
+	Dim task As task 
+	Dim obj As obj 
+	Dim importedFile As String
+	Dim tempFileName As String 
+	Set task = Client.GetImportTask("ImportExcel")
+	Set obj = client.commondialogs
+		importedFile =  obj.fileopen("","","All Files (*.*)|*.*||;")
+	task.FileToImport = importedFile
+	task.SheetToImport = "Database"
+	task.OutputFilePrefix = iSplit(importedFile ,"","\",1,1)
+	importedFile =  iSplit(importedFile ,"","\",1,1)
+	tempFileName = importedFile
+	task.FirstRowIsFieldName = "TRUE"
+	task.EmptyNumericFieldAsZero = "TRUE"
+	task.PerformTask
+	importedFile = task.OutputFilePath("Database")
+	Set task = Nothing
+End Function
+
+
+Function AppendData()
+	Set db = Client.OpenDatabase("On going list.xlsx-Database.IMD")
+	Set task = db.AppendDatabase
+	task.AddDatabase "List of blocked Merchant Category Codes Cleaned.IMD"
+	dbName = "On going list " + CStr(Month(Date())) + " " + CStr(Year(Date())) +  ".IMD"
+	task.PerformTask dbName, ""
+	Set task = Nothing
+	Set db = Nothing
+	Client.OpenDatabase (dbName)
+End Function
