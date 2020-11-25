@@ -23,9 +23,9 @@ Sub Main
 	PrimaryDatabaseName = "Append Databases.IMD"
 	Call SetArrayOfCategorys()
 	Call ScriptForPcardStatment()
-	'MsgBox("File explorer is about to open.Bring in the Approved vendor database.")
-	'Call OpenApprovedVendorsDatabase()
-	'Call RemoveApprovedVendors()
+	MsgBox("File explorer is about to open. Bring in the Approved vendor database.")
+	Call OpenApprovedVendorsDatabase()
+	Call RemoveApprovedVendors()
 	For Each item In categories
   		Call Category(item)
   		Client.RefreshFileExplorer
