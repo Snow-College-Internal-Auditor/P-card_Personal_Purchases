@@ -15,12 +15,17 @@ Dim dbName As String
 Dim subFilename As String 
 Dim customdbName As String 
 Dim PrimaryDatabaseName As String 
+Dim ApprovedVendors as String
 
 Dim getDatabaseDialog As NewDialog
 
 Sub Main
+	PrimaryDatabaseName = "Append Databases.IMD"
 	Call SetArrayOfCategorys()
-	Call CallScriptForPcardStatment()
+	Call ScriptForPcardStatment()
+	'MsgBox("File explorer is about to open.Bring in the Approved vendor database.")
+	'Call OpenApprovedVendorsDatabase()
+	'Call RemoveApprovedVendors()
 	For Each item In categories
   		Call Category(item)
   		Client.RefreshFileExplorer
@@ -67,9 +72,87 @@ End Function
 
 
 'This calls a script that will loop through pcard statements and append them together
-Function CallScriptForPcardStatment
-	Client.RunIDEAScriptEx "C:\Users\mckinnin.lloyd\Documents\Projects\Loop Pull and Join.iss", "", "", "", ""
+Function ScriptForPcardStatment
+	On Error GoTo ErrorHandler
+	'TODO make error check if the file cant be reached. 
+	Dim filename As String
+	Dim obj As Object
+	' Access the CommomDialogs object.
+	MsgBox("When File explorere opens locate the Loop and Pull script. It will be located in the Audit internal drive ")
+	Set obj = Client.CommonDialogs
+	filename = obj.FileOpen("","","All Files (*.*)|*.*||;")
+	Client.RunIDEAScriptEx filename, "", "", "", ""
+		'TODO fix append error if one already is there
 	PrimaryDatabaseName = "Append Databases.IMD"
+	Client.OpenDatabase(PrimaryDatabaseName)
+	Set obj = Nothing
+	Exit Sub
+	ErrorHandler:
+		MsgBox "Idea script Loop Pull and Join could not be run properly. IDEA script stopping."
+		Stop
+End Function
+
+
+' File - Import Assistant: Excel
+Function OpenApprovedVendorsDatabase()
+	Dim task As task 
+	Dim obj As obj 
+	Dim importedFile As String
+	Dim tempFileName As String 
+	Set task = Client.GetImportTask("ImportExcel")
+	Set obj = client.commondialogs
+		importedFile =  obj.fileopen("","","All Files (*.*)|*.*||;")
+	task.FileToImport = importedFile
+	task.SheetToImport = "Database"
+	task.OutputFilePrefix = iSplit(importedFile ,"","\",1,1)
+	importedFile =  iSplit(importedFile ,"","\",1,1)
+	tempFileName = importedFile
+	task.FirstRowIsFieldName = "TRUE"
+	task.EmptyNumericFieldAsZero = "TRUE"
+	task.PerformTask
+	ApprovedVendors = task.OutputFilePath("Database")
+	Set task = Nothing
+End Function
+
+
+Function RemoveApprovedVendors
+	Set db = Client.OpenDatabase(ApprovedVendors)
+	Set task = db.JoinDatabase
+	task.FileToJoin PrimaryDatabaseName
+	task.IncludeAllPFields
+	task.IncludeAllSFields
+	task.AddMatchKey "APPROVED_MERCHANT_NAME", "MERCHANT_NAME", "A"
+	task.CreateVirtualDatabase = False
+	PrimaryDatabaseName = "UnverifiedVendors.IMD"
+	task.PerformTask PrimaryDatabaseName, "", WI_JOIN_NOC_PRI_MATCH
+	Set task = Nothing
+	Set db = Nothing
+	Call RemoveFieldCreatedDuringJoin()
+	Client.OpenDatabase (PrimaryDatabaseName)
+End Function
+
+
+' Remove Field
+Function RemoveFieldCreatedDuringJoin
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.TableManagement
+	task.RemoveField "APPROVED_MERCHANT_NAME"
+	task.PerformTask
+	Set task = Nothing
+	Set db = Nothing
+End Function
+
+
+Function Category(item)
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.Extraction
+	task.IncludeAllFields
+	dbName = item + ".IMD"
+	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = """ & item & """"
+	task.CreateVirtualDatabase = False
+	task.PerformTask 1, db.Count
+	Set task = Nothing
+	Call OrganizeDatabase()
 End Function
 
 
@@ -147,20 +230,8 @@ Function OrganizeDatabase
 	End If 	
 	Set subDb = Nothing
 
-End Function 
-
-
-Function Category(item)
-	Set db = Client.OpenDatabase(PrimaryDatabaseName)
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = item + ".IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = """ & item & """"
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-end function 
+End Function  
+ 
 
 
 'This loops through the NotEmptyDatabaseArray and appends all 
@@ -276,9 +347,9 @@ End Function
 
 Function CreateOrOpenDatabase()
 	Dim button As Integer
-	button = Dialog(getDatabaseDialog )
+	button = Dialog(getDatabaseDialog)
 	If button = -1 Then
-		Call OpenPurchaesDatabase()
+		Call OpenPurchaesHistoryDatabase()
 		Call AppendData()
 	ElseIf button = 0 Then
 		MsgBox("Hit else")
@@ -287,7 +358,7 @@ End Function
  
 
 ' File - Import Assistant: Excel
-Function OpenPurchaesDatabase()
+Function OpenPurchaesHistoryDatabase()
 	Dim task As task 
 	Dim obj As obj 
 	Dim importedFile As String
