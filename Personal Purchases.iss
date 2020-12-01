@@ -1,7 +1,7 @@
 Begin Dialog NewDialog 50,49,150,102,"NewDialog", .NewDialog
   Text 17,10,106,14, "Is there a database to save to?", .Text1
-  OKButton 17,38,40,14, "Yes", .OKButton1
-  CancelButton 82,38,40,14, "No", .CancelButton1
+  PushButton 17,38,40,14, "Yes", .PushButton1
+  PushButton 82,38,40,14, "No", .PushButton2
 End Dialog
 Dim db As Object 
 Dim subDb As Object
@@ -15,7 +15,7 @@ Dim dbName As String
 Dim subFilename As String 
 Dim customdbName As String 
 Dim PrimaryDatabaseName As String 
-Dim ApprovedVendors as String
+Dim ApprovedVendors As String
 
 Dim getDatabaseDialog As NewDialog
 
@@ -40,11 +40,11 @@ Sub Main
 	Client.Closeall
 	Call RemoveUnneededColumns()
 	Call IndexByName()
-	'call ExportDatabase()
 	Client.RefreshFileExplorer
 	Call CreateOrOpenDatabase()
 	Client.RefreshFileExplorer
 End Sub
+
 
 Function SetArrayOfCategorys()
 
@@ -311,48 +311,35 @@ Function RemoveUnneededColumns()
 	task.AddFieldToInc "MERCHANT_ORDER_NUMBER"
 	task.AddFieldToInc "TRANSACTION_COMMENTS"
 	task.AddFieldToInc "DEPARTMENT"
-	dbName = "List of blocked Merchant Category Codes Cleaned.IMD"
-	task.AddExtraction dbName, "", ""
+	PrimaryDatabaseName = "List of blocked Merchant Category Codes Cleaned.IMD"
+	task.AddExtraction PrimaryDatabaseName, "", ""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
 	Set db = Nothing
-	Client.OpenDatabase (dbName)
+	Client.OpenDatabase (PrimaryDatabaseName)
 End Function 
 
 
 Function IndexByName()
-	Set db = Client.OpenDatabase(dbName)
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
 	Set task = db.Index
 	task.AddKey "NAME", "A"
 	task.Index FALSE
 	Set task = Nothing
 	Set db = Nothing
 End Function 
-
-
-Function ExportDatabase()
-	Set db = Client.OpenDatabase(dbName)
-	Set task = db.Index
-	task.AddKey "NAME", "A"
-	task.Index FALSE
-	task = db.ExportDatabase
-	task.IncludeAllFields
-	' Display the setup dialog box before performing the task.
-	task.DisplaySetupDialog 0
-	Set db = Nothing
-	Set task = Nothing
-End Function
 
 
 Function CreateOrOpenDatabase()
 	Dim button As Integer
 	button = Dialog(getDatabaseDialog)
-	If button = -1 Then
+	If button = 1 Then
 		Call OpenPurchaesHistoryDatabase()
 		Call AppendData()
-	ElseIf button = 0 Then
-		MsgBox("Hit else")
+	ElseIf button = 2 Then
+		Call RenamePrimaryDatabaseNameForExport()
+		Call ExportPurchaesHistoryDatabase()
 	End If 
 End Function 
  
@@ -388,4 +375,29 @@ Function AppendData()
 	Set task = Nothing
 	Set db = Nothing
 	Client.OpenDatabase (dbName)
+End Function
+
+
+Function RenamePrimaryDatabaseNameForExport()
+	Client.Closeall
+	Dim newDatabaseName As String 
+	newDatabaseName = "On going list " + CStr(Month(Date())) + " " + CStr(Year(Date())) +  ".IMD"
+	Set ProjectManagement = client.ProjectManagement
+	ProjectManagement.RenameDatabase PrimaryDatabaseName, newDatabaseName
+	PrimaryDatabaseName = newDatabaseName
+	Set ProjectManagement = Nothing
+End Function 
+
+
+Function ExportPurchaesHistoryDatabase()
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.Index
+	task.AddKey "NAME", "A"
+	task.Index FALSE
+	task = db.ExportDatabase
+	task.IncludeAllFields
+	' Display the setup dialog box before performing the task.
+	task.DisplaySetupDialog 0
+	Set db = Nothing
+	Set task = Nothing
 End Function
