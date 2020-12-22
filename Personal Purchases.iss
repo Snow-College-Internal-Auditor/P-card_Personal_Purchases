@@ -13,7 +13,8 @@ Dim NotEmptyDatabaseArray(50) As String
 
 Dim categories(18) As String
 
-Dim dbName As String 
+Dim categoryDatabaseName As String
+Dim finalDatabaseBeforeBeingCleaned As String
 Dim subFilename As String 
 Dim customdbName As String 
 Dim PrimaryDatabaseName As String 
@@ -149,8 +150,8 @@ Function Category(item)
 	Set db = Client.OpenDatabase(PrimaryDatabaseName)
 	Set task = db.Extraction
 	task.IncludeAllFields
-	dbName = item + ".IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = """ & item & """"
+	categoryDatabaseName = item + ".IMD"
+	task.AddExtraction categoryDatabaseName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = """ & item & """"
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
@@ -162,14 +163,14 @@ End Function
 'This keeps an array of all the db's with no data
 Function emptyDatabase
 	emptyArrayCount = 1 + emptyArrayCount
-	EmptyDatabaseArray(emptyArrayCount) = dbName
+	EmptyDatabaseArray(emptyArrayCount) = categoryDatabaseName
 End Function 
 
 
 'This keeps an array of all db's with data
 Function NotEmptyDatabase
 	notEmptyArrayCount = 1 + notEmptyArrayCount
-	NotEmptyDatabaseArray(notEmptyArrayCount) = dbName
+	NotEmptyDatabaseArray(notEmptyArrayCount) = categoryDatabaseName
 End Function 
 
 
@@ -216,7 +217,7 @@ End Function
 'Checks if there is an data and if there is not it calls the emptyDatabase
 'function and if there is data it calls the NotEmptyDatabase function 
 Function OrganizeDatabase
-	Set subDb = Client.OpenDatabase (dbName)
+	Set subDb = Client.OpenDatabase (categoryDatabaseName)
 	
 	'Checks if column name has any rows
 	Set stats = subDb.FieldStats("Name")
@@ -241,7 +242,7 @@ Function AppendAllNoneEmptyDatabases
 	' Declare variables and objects.
 	Dim path As String
 	Dim pm As Object
-	
+	Dim noneEmptyCategoryDatabase As String 
 	' Access project management object to manage databases/projects on
 	' server.
 	Set pm = Client.ProjectManagement
@@ -256,26 +257,45 @@ Function AppendAllNoneEmptyDatabases
 			Set task = db.AppendDatabase
 			Set path = NotEmptyDatabaseArray(i + 1)
 			task.AddDatabase path
+			
 			If j = NotEmptyArrayCount Then
-				dbName = "List of blocked Merchant Category Codes"
+				finalDatabaseBeforeBeingCleaned = "List of blocked Merchant Category Codes"
 			ElseIf j < NotEmptyArrayCount Then 
-				dbName = "Append Databases " + path
+				noneEmptyCategoryDatabase = "Append Databases " + path
 			End If
-			task.PerformTask dbName, ""
+			
+			If noneEmptyCategoryDatabase =  "Append Databases " + path Then 
+				task.PerformTask noneEmptyCategoryDatabase, ""
+			Else 
+				task.PerformTask finalDatabaseBeforeBeingCleaned, ""
+			End If
+			
 			i = i + 1
 			j = j + 3
 			Client.RefreshFileExplorer
 		ElseIf i >= 3 Then 
-			Set db = Client.OpenDatabase(dbName)
+			If noneEmptyCategoryDatabase =  "Append Databases " + path Then 
+				Set db = Client.OpenDatabase(noneEmptyCategoryDatabase)
+			Else 
+				Set db = Client.OpenDatabase(finalDatabaseBeforeBeingCleaned)
+			End If
+			
 			Set task = db.AppendDatabase
 			Set path = NotEmptyDatabaseArray(i)
 			task.AddDatabase path
+			
 			If j = NotEmptyArrayCount Then
-				dbName = "List of blocked Merchant Category Codes"
+				finalDatabaseBeforeBeingCleaned = "List of blocked Merchant Category Codes"
 			ElseIf j < NotEmptyArrayCount Then 
-				dbName = "Append Databases " + path
+				noneEmptyCategoryDatabase = "Append Databases " + path
 			End If
-			task.PerformTask dbName, ""
+			
+			If noneEmptyCategoryDatabase =  "Append Databases " + path Then 
+				task.PerformTask noneEmptyCategoryDatabase, ""
+			Else 
+				task.PerformTask finalDatabaseBeforeBeingCleaned, ""
+			End If
+			 
 			j = j + 1
 			Client.RefreshFileExplorer
 
@@ -294,7 +314,7 @@ End Function
 
 'RemoveUnneededColumns 
 Function RemoveUnneededColumns()
-	Set db = Client.OpenDatabase(dbName)
+	Set db = Client.OpenDatabase(finalDatabaseBeforeBeingCleaned)
 	Set task = db.Extraction
 	task.AddFieldToInc "NAME"
 	task.AddFieldToInc "SHORT_NAME"
@@ -370,12 +390,13 @@ End Function
 Function AppendData()
 	Set db = Client.OpenDatabase("On going list.xlsx-Database.IMD")
 	Set task = db.AppendDatabase
+	Dim onGoingDataBase As String
 	task.AddDatabase "List of blocked Merchant Category Codes Cleaned.IMD"
-	dbName = "On going list " + CStr(Month(Date())) + " " + CStr(Year(Date())) +  ".IMD"
-	task.PerformTask dbName, ""
+	onGoingDataBase = "On going list " + CStr(Month(Date())) + " " + CStr(Year(Date())) +  ".IMD"
+	task.PerformTask onGoingDataBase, ""
 	Set task = Nothing
 	Set db = Nothing
-	Client.OpenDatabase (dbName)
+	Client.OpenDatabase (onGoingDataBase)
 End Function
 
 
