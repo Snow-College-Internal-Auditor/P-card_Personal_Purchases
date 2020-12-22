@@ -3,12 +3,14 @@ Begin Dialog NewDialog 50,49,150,102,"NewDialog", .NewDialog
   PushButton 17,38,40,14, "Yes", .PushButton1
   PushButton 82,38,40,14, "No", .PushButton2
 End Dialog
+
 Dim db As Object 
 Dim subDb As Object
 Dim emptyArrayCount As Integer 
 Dim NotEmptyArrayCount As Integer 
 Dim EmptyDatabaseArray(50) As String 
 Dim NotEmptyDatabaseArray(50) As String 
+
 Dim categories(18) As String
 
 Dim dbName As String 
@@ -153,6 +155,7 @@ Function Category(item)
 	task.PerformTask 1, db.Count
 	Set task = Nothing
 	Call OrganizeDatabase()
+
 End Function
 
 
@@ -229,9 +232,7 @@ Function OrganizeDatabase
 		Call NotEmptyDatabase() 
 	End If 	
 	Set subDb = Nothing
-
 End Function  
- 
 
 
 'This loops through the NotEmptyDatabaseArray and appends all 
