@@ -1,3 +1,9 @@
+Begin Dialog NewDialog 50,49,150,102,"NewDialog", .NewDialog
+  Text 17,10,106,14, "Is there a database to save to?", .Text1
+  PushButton 17,38,40,14, "Yes", .PushButton1
+  PushButton 82,38,40,14, "No", .PushButton2
+End Dialog
+
 Dim db As Object 
 Dim subDb As Object
 Dim emptyArrayCount As Integer 
@@ -5,32 +11,27 @@ Dim NotEmptyArrayCount As Integer
 Dim EmptyDatabaseArray(50) As String 
 Dim NotEmptyDatabaseArray(50) As String 
 
+Dim categories(18) As String
+
 Dim dbName As String 
 Dim subFilename As String 
 Dim customdbName As String 
 Dim PrimaryDatabaseName As String 
+Dim ApprovedVendors As String
+
+Dim getDatabaseDialog As NewDialog
+
 Sub Main
-	Call CallScriptForPcardStatment()
-	Call Beauty()
-	Call Cable()
-	Call Candy_Eating()
-	Call Catalog()
-	Call Computer()
-	Call Department_stores()
-	Call Digital()
-	Call Drinking()
-	Call Florist()
-	Call Gift()
-	Call Medical()
-	Call Motion_Picture()
-	Call Pet()
-	Call Prints()
-	Call Golf()
-	Call Religious()
-	Call Sport()
-	Call Subscription()
-	Call Video()
-	Call Wholesale_medical_dentail()
+	PrimaryDatabaseName = "Append Databases.IMD"
+	Call SetArrayOfCategorys()
+	Call ScriptForPcardStatment()
+	MsgBox("File explorer is about to open. Bring in the Approved vendor database.")
+	Call OpenApprovedVendorsDatabase()
+	Call RemoveApprovedVendors()
+	For Each item In categories
+  		Call Category(item)
+  		Client.RefreshFileExplorer
+	Next
 	If emptyArrayCount  > 0 Then 
 		Call createFolder()
 		Call moveDatabase()
@@ -39,15 +40,122 @@ Sub Main
 		Call AppendAllNoneEmptyDatabases()
 	End If 
 	Client.Closeall
-	Call RemoveUnneededColumns
+	Call RemoveUnneededColumns()
+	Call IndexByName()
+	Client.RefreshFileExplorer
+	Call CreateOrOpenDatabase()
 	Client.RefreshFileExplorer
 End Sub
 
 
+Function SetArrayOfCategorys()
+
+	 categories(0) = "BEAUTY"
+	 categories(1) = "CABLE"
+	 categories(2) = "CANDY"
+	 categories(3) = "CATALOG MERCHANT"
+	 categories(4) = "COMPUTER"
+	 categories(5) = "DEPARTMENT"
+	 categories(6) = "LARGE DIGITAL"
+	 categories(7) = "DRINKING"
+	 categories(8) = "FLORISTS"
+	 categories(9) = "GIFT"
+	 categories(10) = "MEDICAL"
+	 categories(11) = "MOTION PICTURE"
+	 categories(12) = "PET"
+	 categories(13) = "PUBLISHING"
+	 categories(14) = "PUBLIC GOLF"
+	 categories(15) = "RELIGIOUS"
+	 categories(16) = "SPORT"
+	 categories(17) = "CONTINUITY"
+	 categories(18) = "VIDEO"
+
+End Function 
+
+
 'This calls a script that will loop through pcard statements and append them together
-Function CallScriptForPcardStatment
-	Client.RunIDEAScriptEx "Z:\2020 Activities\Data Analytics\Active Scripts\Master Scripts\Loop Pull and Join.iss", "", "", "", ""
+Function ScriptForPcardStatment
+	On Error GoTo ErrorHandler
+	'TODO make error check if the file cant be reached. 
+	Dim filename As String
+	Dim obj As Object
+	' Access the CommomDialogs object.
+	MsgBox("When File explorere opens locate the Loop and Pull script. It will be located in the Audit internal drive ")
+	Set obj = Client.CommonDialogs
+	filename = obj.FileOpen("","","All Files (*.*)|*.*||;")
+	Client.RunIDEAScriptEx filename, "", "", "", ""
+		'TODO fix append error if one already is there
 	PrimaryDatabaseName = "Append Databases.IMD"
+	Client.OpenDatabase(PrimaryDatabaseName)
+	Set obj = Nothing
+	Exit Sub
+	ErrorHandler:
+		MsgBox "Idea script Loop Pull and Join could not be run properly. IDEA script stopping."
+		Stop
+End Function
+
+
+' File - Import Assistant: Excel
+Function OpenApprovedVendorsDatabase()
+	Dim task As task 
+	Dim obj As obj 
+	Dim importedFile As String
+	Dim tempFileName As String 
+	Set task = Client.GetImportTask("ImportExcel")
+	Set obj = client.commondialogs
+		importedFile =  obj.fileopen("","","All Files (*.*)|*.*||;")
+	task.FileToImport = importedFile
+	task.SheetToImport = "Database"
+	task.OutputFilePrefix = iSplit(importedFile ,"","\",1,1)
+	importedFile =  iSplit(importedFile ,"","\",1,1)
+	tempFileName = importedFile
+	task.FirstRowIsFieldName = "TRUE"
+	task.EmptyNumericFieldAsZero = "TRUE"
+	task.PerformTask
+	ApprovedVendors = task.OutputFilePath("Database")
+	Set task = Nothing
+End Function
+
+
+Function RemoveApprovedVendors
+	Set db = Client.OpenDatabase(ApprovedVendors)
+	Set task = db.JoinDatabase
+	task.FileToJoin PrimaryDatabaseName
+	task.IncludeAllPFields
+	task.IncludeAllSFields
+	task.AddMatchKey "APPROVED_MERCHANT_NAME", "MERCHANT_NAME", "A"
+	task.CreateVirtualDatabase = False
+	PrimaryDatabaseName = "UnverifiedVendors.IMD"
+	task.PerformTask PrimaryDatabaseName, "", WI_JOIN_NOC_PRI_MATCH
+	Set task = Nothing
+	Set db = Nothing
+	Call RemoveFieldCreatedDuringJoin()
+	Client.OpenDatabase (PrimaryDatabaseName)
+End Function
+
+
+' Remove Field
+Function RemoveFieldCreatedDuringJoin
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.TableManagement
+	task.RemoveField "APPROVED_MERCHANT_NAME"
+	task.PerformTask
+	Set task = Nothing
+	Set db = Nothing
+End Function
+
+
+Function Category(item)
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.Extraction
+	task.IncludeAllFields
+	dbName = item + ".IMD"
+	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = """ & item & """"
+	task.CreateVirtualDatabase = False
+	task.PerformTask 1, db.Count
+	Set task = Nothing
+	Call OrganizeDatabase()
+
 End Function
 
 
@@ -124,268 +232,7 @@ Function OrganizeDatabase
 		Call NotEmptyDatabase() 
 	End If 	
 	Set subDb = Nothing
-
-End Function 
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Beauty
-	Set db = Client.OpenDatabase(PrimaryDatabaseName)
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "BEAUTY.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""BEAUTY"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name 
-Function Cable
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "CABLE.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CABLE"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Candy_Eating
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "CANDY.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CANDY"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Catalog
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "CATALOG.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CATALOG MERCHANT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Computer
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "COMPUTER.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""COMPUTER"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Department_stores
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "DEPARTMENT.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""DEPARTMENT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Digital
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "DIGITAL.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""LARGE DIGITAL"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Drinking
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "DRINKING.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""DRINKING"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Florist
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "FLORISTS.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""FLORISTS"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Gift
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "GIFT.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""GIFT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Medical
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "Medical.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_GROUP_DESCRIPTION = ""MEDICAL"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Motion_Picture
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "MOTION _PICTURE.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""MOTION PICTURE"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Pet
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "PET.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PET"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Prints
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "PRINTS.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PUBLISHING"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Golf
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "PUBLIC_GOLF.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""PUBLIC GOLF"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Religious
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "RELIGIOUS.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""RELIGIOUS"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Sport
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "SPORT.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""SPORT"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Subscription
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "Subscriptions.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""CONTINUITY"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name 
-Function Video
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "VIDEO.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""VIDEO"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
-
-
-'This filters the db for the specific merchent code listed in the function name
-Function Wholesale_medical_dentail
-	Set task = db.Extraction
-	task.IncludeAllFields
-	dbName = "WHOLESALE_MED_DENTAL.IMD"
-	task.AddExtraction dbName, "", "MERCHANT_CATEGORY_CODE_DESCRIPTION = ""WHOLESALE MED/DENTAL"""
-	task.CreateVirtualDatabase = False
-	task.PerformTask 1, db.Count
-	Set task = Nothing
-	Call OrganizeDatabase()
-End Function
+End Function  
 
 
 'This loops through the NotEmptyDatabaseArray and appends all 
@@ -446,7 +293,7 @@ End Function
 
 
 'RemoveUnneededColumns 
-Function RemoveUnneededColumns 
+Function RemoveUnneededColumns()
 	Set db = Client.OpenDatabase(dbName)
 	Set task = db.Extraction
 	task.AddFieldToInc "NAME"
@@ -465,11 +312,93 @@ Function RemoveUnneededColumns
 	task.AddFieldToInc "MERCHANT_ORDER_NUMBER"
 	task.AddFieldToInc "TRANSACTION_COMMENTS"
 	task.AddFieldToInc "DEPARTMENT"
-	dbName = "List of blocked Merchant Category Codes Cleaned.IMD"
-	task.AddExtraction dbName, "", ""
+	PrimaryDatabaseName = "List of blocked Merchant Category Codes Cleaned.IMD"
+	task.AddExtraction PrimaryDatabaseName, "", ""
 	task.CreateVirtualDatabase = False
 	task.PerformTask 1, db.Count
 	Set task = Nothing
 	Set db = Nothing
-	Client.OpenDatabase (dbName)
+	Client.OpenDatabase (PrimaryDatabaseName)
 End Function 
+
+
+Function IndexByName()
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.Index
+	task.AddKey "NAME", "A"
+	task.Index FALSE
+	Set task = Nothing
+	Set db = Nothing
+End Function 
+
+
+Function CreateOrOpenDatabase()
+	Dim button As Integer
+	button = Dialog(getDatabaseDialog)
+	If button = 1 Then
+		Call OpenPurchaesHistoryDatabase()
+		Call AppendData()
+	ElseIf button = 2 Then
+		Call RenamePrimaryDatabaseNameForExport()
+		Call ExportPurchaesHistoryDatabase()
+	End If 
+End Function 
+ 
+
+' File - Import Assistant: Excel
+Function OpenPurchaesHistoryDatabase()
+	Dim task As task 
+	Dim obj As obj 
+	Dim importedFile As String
+	Dim tempFileName As String 
+	Set task = Client.GetImportTask("ImportExcel")
+	Set obj = client.commondialogs
+		importedFile =  obj.fileopen("","","All Files (*.*)|*.*||;")
+	task.FileToImport = importedFile
+	task.SheetToImport = "Database"
+	task.OutputFilePrefix = iSplit(importedFile ,"","\",1,1)
+	importedFile =  iSplit(importedFile ,"","\",1,1)
+	tempFileName = importedFile
+	task.FirstRowIsFieldName = "TRUE"
+	task.EmptyNumericFieldAsZero = "TRUE"
+	task.PerformTask
+	importedFile = task.OutputFilePath("Database")
+	Set task = Nothing
+End Function
+
+
+Function AppendData()
+	Set db = Client.OpenDatabase("On going list.xlsx-Database.IMD")
+	Set task = db.AppendDatabase
+	task.AddDatabase "List of blocked Merchant Category Codes Cleaned.IMD"
+	dbName = "On going list " + CStr(Month(Date())) + " " + CStr(Year(Date())) +  ".IMD"
+	task.PerformTask dbName, ""
+	Set task = Nothing
+	Set db = Nothing
+	Client.OpenDatabase (dbName)
+End Function
+
+
+Function RenamePrimaryDatabaseNameForExport()
+	Client.Closeall
+	Dim newDatabaseName As String 
+	newDatabaseName = "On going list " + CStr(Month(Date())) + " " + CStr(Year(Date())) +  ".IMD"
+	Set ProjectManagement = client.ProjectManagement
+	ProjectManagement.RenameDatabase PrimaryDatabaseName, newDatabaseName
+	PrimaryDatabaseName = newDatabaseName
+	Set ProjectManagement = Nothing
+End Function 
+
+
+Function ExportPurchaesHistoryDatabase()
+	Set db = Client.OpenDatabase(PrimaryDatabaseName)
+	Set task = db.Index
+	task.AddKey "NAME", "A"
+	task.Index FALSE
+	task = db.ExportDatabase
+	task.IncludeAllFields
+	' Display the setup dialog box before performing the task.
+	task.DisplaySetupDialog 0
+	Set db = Nothing
+	Set task = Nothing
+End Function
